@@ -1,11 +1,11 @@
 #pragma once
-#include "Cell.hpp"
-
+#include "Candies.hpp"
+#include "vector"
 
 
 
 class PhysicsEngine{
-    Cell c;
+    Vector<Vector<Candies>>
 public:
     PhysicsEngine():c{Point{250,250},100,100}{}; 
     void draw() {
