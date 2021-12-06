@@ -1,21 +1,18 @@
 #pragma once
 #include "Candies.hpp"
 #include "vector"
+#include "Grid.hpp"
 
 
 
 class PhysicsEngine{
-    Vector<Vector<Candies>>
+// basically the link between front end (window) and back end (Grid)
+    Grid g;
 public:
-    PhysicsEngine():c{Point{250,250},100,100}{}; 
-    void draw() {
-        c.draw();
-    }
-    void mouseMove(Point mouseLoc) {
-        c.mouseMove(mouseLoc);
-    }
-    void mouseClick(Point mouseLoc){
-        c.mouseClick(mouseLoc);        
-    }
-    void keyPressed(int /*keyCode*/) {exit(0);}
+    PhysicsEngine();
+    ~PhysicsEngine();
+    void draw();
+    void mouseMove(Point mouseLoc);
+    void mouseClick(Point mouseLoc);
+    void keyPressed(int /*keyCode*/);
 };
