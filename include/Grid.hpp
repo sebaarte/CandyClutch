@@ -10,11 +10,11 @@ class Grid
 private:
     std::vector<std::vector<Candy*>> gameGrid;
     void swap(Point pos1, Point pos2);
-    bool isAdjacent(Point pos1, Point pos2) const;
 public:
     Grid();
     ~Grid();
     void render() const;
-    Candy *grab(Point mouseLoc);
+    Candy *grab(Point mouseLoc,Candy *grabbed);
     void ungrab(Point mouseLoc,Candy *grabbed);
+    bool isAdjacent(Point pos1, Point pos2) const;
 };

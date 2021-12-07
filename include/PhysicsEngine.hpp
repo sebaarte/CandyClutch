@@ -9,7 +9,7 @@ class PhysicsEngine{
 // basically the link between front end (window) and back end (Grid)
 // mainly calls Grid
     Grid g;
-    Candy *grabbed;
+    Candy *grabbed = nullptr;
 public:
     PhysicsEngine();
     ~PhysicsEngine();

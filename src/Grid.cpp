@@ -1,6 +1,7 @@
 #include "Grid.hpp"
 #include "Fl/fl_draw.H"
 #include "constantes.hpp"
+#include "stdlib.h"
 
 Grid::Grid()
 {
@@ -70,20 +71,28 @@ void Grid::render() const
     }
 }
 
-Candy *Grid::grab(Point mouseLoc)
+Candy *Grid::grab(Point mouseLoc, Candy *grabbed)
 {
-    for (auto i : gameGrid)
+    if (!grabbed)
     {
-        for (auto j : i)
+        for (auto i : gameGrid)
         {
-            if (j->contains(mouseLoc))
+            for (auto j : i)
             {
-                j->grab(mouseLoc);
-                return j;
+                if (j->contains(mouseLoc))
+                {
+                    j->grab(mouseLoc);
+                    return j;
+                }
             }
         }
+        return nullptr;
     }
-    return nullptr;
+    else
+    {
+        grabbed->grab(mouseLoc);
+        return grabbed;
+    }
 }
 
 void Grid::ungrab(Point mouseLoc, Candy *grabbed)
@@ -92,37 +101,33 @@ void Grid::ungrab(Point mouseLoc, Candy *grabbed)
     {
         for (auto j : i)
         {
-            if (j->contains(mouseLoc))
+            if (j->contains(mouseLoc) && mouseLoc != j->absolutePos() && isAdjacent(j->relativePos(), grabbed->relativePos()))
             {
                 swap(j->relativePos(), grabbed->relativePos());
+                return;
             }
         }
     }
+    grabbed->setPos(grabbed->relativePos());
 }
 
 void Grid::swap(Point pos1, Point pos2)
 {
-    if (pos1 != pos2 && isAdjacent(pos1, pos2))
-    {
-        Candy *temp = gameGrid[pos1.y][pos1.x];
-        gameGrid[pos1.y][pos1.x] = gameGrid[pos2.y][pos2.x];
-        gameGrid[pos2.y][pos2.x] = temp;
-        gameGrid[pos1.y][pos1.x]->setPos(pos2);
-        gameGrid[pos2.y][pos2.x]->setPos(pos1);
-    }
+    gameGrid[pos1.y][pos1.x]->setPos(pos2);
+    gameGrid[pos2.y][pos2.x]->setPos(pos1);
+    std::iter_swap(gameGrid[pos1.y].begin() + pos1.x, gameGrid[pos2.y].begin() + pos2.x);
 }
 
 bool Grid::isAdjacent(Point pos1, Point pos2) const
 {
     if ((pos1.x == pos2.x))
     {
-        if (pos1.y+1 == pos2.y || pos1.y-1 == pos2.y)
+        if (pos1.y + 1 == pos2.y || pos1.y - 1 == pos2.y)
         {
             return true;
         }
-        
     }
-    else if (pos1.x-1 == pos2.x || pos1.x+1 == pos2.x)
+    else if (pos1.x - 1 == pos2.x || pos1.x + 1 == pos2.x)
     {
         if (pos1.y == pos2.y)
         {
@@ -130,5 +135,4 @@ bool Grid::isAdjacent(Point pos1, Point pos2) const
         }
     }
     return false;
-    
 }

@@ -5,7 +5,7 @@
 #define FL_PINK fl_rgb_color(255, 192, 203)
 #define FL_BROWN fl_rgb_color(150, 75, 0)
 #define FL_PURPLE fl_rgb_color(128, 0, 28)
-
+/////////////////////////////////////////// candy methods
 Candy::Candy(int x, int y)
 {
     _relativepos = Point{x, y};
@@ -32,6 +32,28 @@ void Candy::ungrab()
     _absolutepos = relativeToAbsolute();
 }
 
+const Point Candy::absolutePos() const
+{
+    return static_cast<const Point>(_absolutepos);
+}
+
+const Point Candy::relativePos() const
+{
+    return static_cast<const Point>(_relativepos);
+}
+
+void Candy::grab(Point mouseLoc)
+{
+    _absolutepos = mouseLoc;
+}
+
+void Candy::setPos(Point newPos)
+{
+    _relativepos = newPos;
+    _absolutepos = relativeToAbsolute();
+}
+
+/////////////// all draw methods overriden
 void Napoleone::draw()
 {
     fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_YELLOW);
@@ -62,23 +84,3 @@ void Chique::draw()
     fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_BLUE);
 }
 
-const Point Candy::absolutePos() const
-{
-    return static_cast<const Point>(_absolutepos);
-}
-
-const Point Candy::relativePos() const
-{
-    return static_cast<const Point>(_relativepos);
-}
-
-void Candy::grab(Point mouseLoc)
-{
-    _absolutepos = mouseLoc;
-}
-
-void Candy::setPos(Point newPos)
-{
-    _relativepos = newPos;
-    _absolutepos = relativeToAbsolute();
-}

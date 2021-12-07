@@ -1,19 +1,18 @@
 #include "MainWindow.hpp"
 #include "constantes.hpp"
+#include "Fl/Fl.H"
 
-MainWindow::MainWindow() : Fl_Window(windowX, windowY, windowSize, windowSize, "CandyClutch"),physicsEngine{}
+MainWindow::MainWindow() : Fl_Window(windowX, windowY, windowSize, windowSize, "CandyClutch"), physicsEngine{}
 {
 	Fl::add_timeout(refreshRate, Timer_CB, this);
 	resizable(NULL);
 }
-
 
 void MainWindow::draw()
 {
 	Fl_Window::draw();
 	physicsEngine.draw();
 }
-
 
 int MainWindow::handle(int event)
 {
@@ -28,13 +27,16 @@ int MainWindow::handle(int event)
 	case FL_KEYDOWN:
 		physicsEngine.keyPressed(Fl::event_key());
 		return 1;
+	case FL_RELEASE:
+		if (Fl::event_button() == FL_LEFT_MOUSE)
+		{
+			physicsEngine.undrag(Point{Fl::event_x(), Fl::event_y()});
+		}
+		break;
 	case FL_DRAG:
 		physicsEngine.drag(Point{Fl::event_x(), Fl::event_y()});
 		break;
-	case FL_RELEASE:
-		physicsEngine.undrag(Point{Fl::event_x(), Fl::event_y()});
-		break;
-		
+	
 	}
 	return 0;
 }

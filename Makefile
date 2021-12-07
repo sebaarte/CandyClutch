@@ -34,6 +34,3 @@ $(ODIR)%.o: $(SDIR)%.cpp
 
 clean:
 	rm -f $(ODIR)* $(BUILD)
-
-run:
-	./exec
