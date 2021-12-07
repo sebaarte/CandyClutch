@@ -1,4 +1,6 @@
 #include "Grid.hpp"
+#include "Fl/fl_draw.H"
+#include "constantes.hpp"
 
 Grid::Grid()
 {
@@ -48,14 +50,85 @@ Grid::~Grid()
     }
 }
 
-void Grid::render()
+void Grid::render() const
 {
-    // displays different candies in the window
-    for (unsigned long y = 0; y < 7; y++)
+    for (int i = 0; i < 7; i++)
     {
-        for (unsigned long x = 0; x < 7; x++)
+        for (int j = 0; j < 7; j++)
         {
-            gameGrid[y][x]->draw(Point{x,y});
+            fl_draw_box(FL_FLAT_BOX, offset + j * 90, offset + i * 90, gridSize, gridSize, FL_WHITE);
         }
     }
+
+    // displays different candies in the window
+    for (int y = 0; y < 7; y++)
+    {
+        for (int x = 0; x < 7; x++)
+        {
+            gameGrid[y][x]->draw();
+        }
+    }
+}
+
+Candy *Grid::grab(Point mouseLoc)
+{
+    for (auto i : gameGrid)
+    {
+        for (auto j : i)
+        {
+            if (j->contains(mouseLoc))
+            {
+                j->grab(mouseLoc);
+                return j;
+            }
+        }
+    }
+    return nullptr;
+}
+
+void Grid::ungrab(Point mouseLoc, Candy *grabbed)
+{
+    for (auto i : gameGrid)
+    {
+        for (auto j : i)
+        {
+            if (j->contains(mouseLoc))
+            {
+                swap(j->relativePos(), grabbed->relativePos());
+            }
+        }
+    }
+}
+
+void Grid::swap(Point pos1, Point pos2)
+{
+    if (pos1 != pos2 && isAdjacent(pos1, pos2))
+    {
+        Candy *temp = gameGrid[pos1.y][pos1.x];
+        gameGrid[pos1.y][pos1.x] = gameGrid[pos2.y][pos2.x];
+        gameGrid[pos2.y][pos2.x] = temp;
+        gameGrid[pos1.y][pos1.x]->setPos(pos2);
+        gameGrid[pos2.y][pos2.x]->setPos(pos1);
+    }
+}
+
+bool Grid::isAdjacent(Point pos1, Point pos2) const
+{
+    if ((pos1.x == pos2.x))
+    {
+        if (pos1.y+1 == pos2.y || pos1.y-1 == pos2.y)
+        {
+            return true;
+        }
+        
+    }
+    else if (pos1.x-1 == pos2.x || pos1.x+1 == pos2.x)
+    {
+        if (pos1.y == pos2.y)
+        {
+            return true;
+        }
+    }
+    return false;
+    
 }

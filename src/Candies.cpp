@@ -1,25 +1,84 @@
 #include "Candies.hpp"
 #include "FL/fl_draw.H"
+#include "constantes.hpp"
 
-void Candy::mouseClick(Point mouseLoc)
+#define FL_PINK fl_rgb_color(255, 192, 203)
+#define FL_BROWN fl_rgb_color(150, 75, 0)
+#define FL_PURPLE fl_rgb_color(128, 0, 28)
+
+Candy::Candy(int x, int y)
 {
-
-
-
+    _relativepos = Point{x, y};
+    _absolutepos = relativeToAbsolute();
 }
 
-void Candy::mouseMove(Point mouseLoc){}
+bool Candy::contains(Point mouseLoc)
+{
+    const Point candyPos = absolutePos();
+    if ((mouseLoc.x <= candyPos.x + candySize / 2) && (mouseLoc.x >= candyPos.x - candySize / 2) && (mouseLoc.y <= candyPos.y + candySize / 2) && (mouseLoc.y >= candyPos.y - candySize / 2))
+    {
+        return True;
+    }
+    return false;
+}
 
-void Napoleone::draw(Point pos){}
+Point Candy::relativeToAbsolute()
+{
+    return Point{offset + candySize / 2 + 10 + _relativepos.x * 90, offset + candySize / 2 + 10 + _relativepos.y * 90};
+}
 
-void Fruitello::draw(Point pos){}
+void Candy::ungrab()
+{
+    _absolutepos = relativeToAbsolute();
+}
 
-void Magnom::draw(Point pos){}
+void Napoleone::draw()
+{
+    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_YELLOW);
+}
 
-void Chocoteuf::draw(Point pos){}
+void Fruitello::draw()
+{
+    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_PINK);
+}
 
-void Haribot::draw(Point pos){}
+void Magnom::draw()
+{
+    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_BLACK);
+}
 
-void Chique::draw(Point pos){}
+void Chocoteuf::draw()
+{
+    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_BROWN);
+}
 
+void Haribot::draw()
+{
+    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_PURPLE);
+}
 
+void Chique::draw()
+{
+    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_BLUE);
+}
+
+const Point Candy::absolutePos() const
+{
+    return static_cast<const Point>(_absolutepos);
+}
+
+const Point Candy::relativePos() const
+{
+    return static_cast<const Point>(_relativepos);
+}
+
+void Candy::grab(Point mouseLoc)
+{
+    _absolutepos = mouseLoc;
+}
+
+void Candy::setPos(Point newPos)
+{
+    _relativepos = newPos;
+    _absolutepos = relativeToAbsolute();
+}
