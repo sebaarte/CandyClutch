@@ -9,6 +9,7 @@ PhysicsEngine::~PhysicsEngine() { g.~Grid(); }
 void PhysicsEngine::draw()
 {
     g.render();
+    
 }
 void PhysicsEngine::mouseMove(Point mouseLoc)
 {

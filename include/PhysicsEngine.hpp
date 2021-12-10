@@ -6,8 +6,8 @@
 
 
 class PhysicsEngine{
-// basically the link between front end (window) and back end (Grid)
-// mainly calls Grid
+// basically an API to call the Grid.
+// mainly calls Grid methods
     Grid g;
     Candy *grabbed = nullptr;
 public:

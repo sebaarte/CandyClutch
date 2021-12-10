@@ -2,6 +2,7 @@
 #include "Fl/fl_draw.H"
 #include "constantes.hpp"
 #include "stdlib.h"
+#include "Candies.hpp"
 
 Grid::Grid()
 {
@@ -57,7 +58,7 @@ void Grid::render() const
     {
         for (int j = 0; j < 7; j++)
         {
-            fl_draw_box(FL_FLAT_BOX, offset + j * 90, offset + i * 90, gridSize, gridSize, FL_WHITE);
+            fl_draw_box(FL_FLAT_BOX, offset + j * 90, offset + i * 90, squareSize, squareSize, FL_WHITE);
         }
     }
 
@@ -101,7 +102,7 @@ void Grid::ungrab(Point mouseLoc, Candy *grabbed)
     {
         for (auto j : i)
         {
-            if (j->contains(mouseLoc) && mouseLoc != j->absolutePos() && isAdjacent(j->relativePos(), grabbed->relativePos()))
+            if (j->contains(mouseLoc) && isAdjacent(j->relativePos(), grabbed->relativePos())) //&& isValidMove(j->relativePos(), grabbed->relativePos()))
             {
                 swap(j->relativePos(), grabbed->relativePos());
                 return;
@@ -135,4 +136,59 @@ bool Grid::isAdjacent(Point pos1, Point pos2) const
         }
     }
     return false;
+}
+
+bool Grid::isValidMove(Point pos1, Point pos2) const
+{
+    return true;
+}
+
+int Grid::neighboorType(Point pos, int direction) const
+{
+    switch (direction)
+    {
+    case UP:
+        if (pos.y == 0)
+        {
+            return 0;
+        }
+        else
+        {
+            return gameGrid[pos.y - 1][pos.x]->type;
+        }
+
+        break;
+    case DOWN:
+        if (pos.y + 1 == gridSize)
+        {
+            return 0;
+        }
+        else
+        {
+            return gameGrid[pos.y + 1][pos.x]->type;
+        }
+        break;
+    case LEFT:
+        if (pos.x == 0)
+        {
+            return 0;
+        }
+        else
+        {
+            return gameGrid[pos.y][pos.x - 1]->type;
+        }
+        break;
+    case RIGHT:
+        if (pos.x + 1 == gridSize)
+        {
+            return 0;
+        }
+        else
+        {
+            return gameGrid[pos.y][pos.x + 1]->type;
+        }
+        break;
+    default:
+        return 0;
+    }
 }

@@ -5,6 +5,8 @@
 #define FL_PINK fl_rgb_color(255, 192, 203)
 #define FL_BROWN fl_rgb_color(150, 75, 0)
 #define FL_PURPLE fl_rgb_color(128, 0, 28)
+
+
 /////////////////////////////////////////// candy methods
 Candy::Candy(int x, int y)
 {
@@ -54,33 +56,36 @@ void Candy::setPos(Point newPos)
 }
 
 /////////////// all draw methods overriden
-void Napoleone::draw()
+void Napoleone::draw() const
 {
     fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_YELLOW);
 }
 
-void Fruitello::draw()
+void Fruitello::draw() const
 {
     fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_PINK);
 }
 
-void Magnom::draw()
+void Magnom::draw() const
 {
     fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_BLACK);
 }
 
-void Chocoteuf::draw()
+void Chocoteuf::draw() const
 {
     fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_BROWN);
 }
 
-void Haribot::draw()
+void Haribot::draw() const
 {
     fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_PURPLE);
 }
 
-void Chique::draw()
+void Chique::draw() const
 {
     fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_BLUE);
 }
 
+void Empty::draw() const
+{
+}
