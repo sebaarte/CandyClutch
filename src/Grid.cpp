@@ -102,7 +102,7 @@ void Grid::ungrab(Point mouseLoc, Candy *grabbed)
     {
         for (auto j : i)
         {
-            if (j->contains(mouseLoc) && isAdjacent(j->relativePos(), grabbed->relativePos())) //&& isValidMove(j->relativePos(), grabbed->relativePos()))
+            if (j->contains(mouseLoc) && isAdjacent(j->relativePos(), grabbed->relativePos()) && isValidMove(j->relativePos(), grabbed->relativePos()))
             {
                 swap(j->relativePos(), grabbed->relativePos());
                 return;
@@ -138,12 +138,107 @@ bool Grid::isAdjacent(Point pos1, Point pos2) const
     return false;
 }
 
-bool Grid::isValidMove(Point pos1, Point pos2) const
+bool Grid::isValidMove(Point dest, Point source) const
 {
-    return true;
+    // big ugly function to check if the move creates a alignement of 3 Candies
+    int destType = caseType(source, SELF);
+    int sourceType = caseType(dest, SELF);
+    bool sameType = (sourceType == destType);
+    // printf("source %d, dest %d\n",sourceType,destType);
+    // printf("source right %d, dest right %d\n",caseType(source,RIGHT),caseType(dest,RIGHT));
+    // printf("source dright %d, dest dright %d\n",caseType(source,DOUBLERIGHT),caseType(dest,DOUBLERIGHT));
+    printf("source left %d, dest left %d\n",caseType(source,LEFT),caseType(dest,LEFT));
+    printf("source dleft %d, dest dleft %d\n",caseType(source,DOUBLELEFT),caseType(dest,DOUBLELEFT));
+    // printf("source up %d, dest up %d\n",caseType(source,UP),caseType(dest,UP));
+    // printf("source dup %d, dest dup %d\n",caseType(source,DOUBLEUP),caseType(dest,DOUBLEUP));
+    // printf("source down %d, dest down %d\n",caseType(source,DOWN),caseType(dest,DOWN));
+    // printf("source ddown %d, dest ddown %d\n",caseType(source,DOUBLEDOWN),caseType(dest,DOUBLEDOWN));
+
+
+
+    if (dest.x != source.x) // moving horizontally
+    {
+        if (caseType(dest, UP) == destType && (caseType(dest, DOUBLEUP) == destType || caseType(dest, DOWN) == destType))
+        {
+            printf("memes cases verticales pour dest\n");
+            return true;
+        }
+        if (caseType(source, UP) == sourceType && (caseType(source, DOUBLEUP) == sourceType || caseType(source, DOWN) == sourceType))
+        {
+            printf("memes cases verticales pour source\n");
+            return true;
+        }
+        if (caseType(dest, DOWN) == destType && caseType(dest, DOUBLEDOWN) == destType)
+        {
+            printf("memes cases vers le bas pour dest\n");
+            return true;
+        }
+        if (caseType(source, DOWN) == sourceType && caseType(source, DOUBLEDOWN) == sourceType)
+        {
+            printf("memes cases vers le bas pour source\n");
+            return true;
+        }
+        if (source.x < dest.x) // moving right
+        {
+            if (caseType(dest, RIGHT) == destType && (caseType(dest, DOUBLERIGHT) == destType || sameType))
+            {
+                printf("memes cases horizontales pour dest\n");
+                return true;
+            }
+        }
+        else // moving left
+        {
+            if (caseType(dest, LEFT) == sourceType && (caseType(dest, DOUBLELEFT) == sourceType|| sameType))
+            {
+                printf("memes cases horizontales pour source\n");
+                return true;
+            }
+        }
+    }
+    else if (source.y != dest.y) // moving vertically
+    {
+        if (caseType(dest, LEFT) == destType && (caseType(dest, DOUBLELEFT) == destType || caseType(dest, RIGHT) == destType))
+        {
+            printf("memes cases horizontales pour dest\n");
+            return true;
+        }
+        if (caseType(source, LEFT) == sourceType && (caseType(source, DOUBLELEFT) == sourceType || caseType(source, RIGHT) == sourceType))
+        {
+            printf("memes cases horizontales pour source\n");
+            return true;
+        }
+        if (caseType(dest, RIGHT) == destType && caseType(dest, DOUBLERIGHT) == destType)
+        {
+            printf("memes cases droites pour dest\n");
+            return true;
+        }
+        if (caseType(source, RIGHT) == sourceType && caseType(source, DOUBLERIGHT) == sourceType)
+        {
+            printf("memes cases droites pour sources\n");
+            return true;
+        }
+        if (source.y < dest.y) // moving up
+        {
+            if (caseType(dest, UP) == destType && (caseType(dest, DOUBLEUP) == destType || sameType))
+            {
+                printf("memes cases verticales pour dest\n");
+                return true;
+            }
+        }
+        else // moving down
+        {
+            if (caseType(source, DOWN) == sourceType && (caseType(source, DOUBLEDOWN) == sourceType || sameType))
+            {
+                printf("memes cases verticales pour source\n");
+                return true;
+            }
+        }
+    }
+    printf("non\n");
+    return false;
 }
 
-int Grid::neighboorType(Point pos, int direction) const
+int Grid::caseType(Point pos, int direction) const
 {
     switch (direction)
     {
@@ -156,10 +251,17 @@ int Grid::neighboorType(Point pos, int direction) const
         {
             return gameGrid[pos.y - 1][pos.x]->type;
         }
-
-        break;
+    case DOUBLEUP:
+        if (pos.y < 2)
+        {
+            return 0;
+        }
+        else
+        {
+            return gameGrid[pos.y - 2][pos.x]->type;
+        }
     case DOWN:
-        if (pos.y + 1 == gridSize)
+        if (pos.y + 1 == GRIDSIZE)
         {
             return 0;
         }
@@ -167,7 +269,16 @@ int Grid::neighboorType(Point pos, int direction) const
         {
             return gameGrid[pos.y + 1][pos.x]->type;
         }
-        break;
+    case DOUBLEDOWN:
+        if (pos.y + 1 == GRIDSIZE || pos.y + 2 == GRIDSIZE)
+        {
+            return 0;
+        }
+        else
+        {
+            return gameGrid[pos.y + 2][pos.x]->type;
+        }
+
     case LEFT:
         if (pos.x == 0)
         {
@@ -177,9 +288,17 @@ int Grid::neighboorType(Point pos, int direction) const
         {
             return gameGrid[pos.y][pos.x - 1]->type;
         }
-        break;
+    case DOUBLELEFT:
+        if (pos.x < 2)
+        {
+            return 0;
+        }
+        else
+        {
+            return gameGrid[pos.y][pos.x - 2]->type;
+        }
     case RIGHT:
-        if (pos.x + 1 == gridSize)
+        if (pos.x + 1 == GRIDSIZE)
         {
             return 0;
         }
@@ -188,6 +307,18 @@ int Grid::neighboorType(Point pos, int direction) const
             return gameGrid[pos.y][pos.x + 1]->type;
         }
         break;
+    case DOUBLERIGHT:
+        if (pos.x + 1 == GRIDSIZE || pos.x + 2 == GRIDSIZE)
+        {
+            return 0;
+        }
+        else
+        {
+            return gameGrid[pos.y][pos.x + 2]->type;
+        }
+
+    case SELF:
+        return gameGrid[pos.y][pos.x]->type;
     default:
         return 0;
     }

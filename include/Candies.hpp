@@ -8,7 +8,7 @@ protected:
     Point _absolutepos;
     Point relativeToAbsolute();
 public:
-    int type = -1;
+    int type;
     Candy(Point pos) : _relativepos(pos) {_absolutepos = relativeToAbsolute();}
     Candy(int x, int y);
     virtual void draw() const  = 0;
@@ -26,7 +26,7 @@ class Napoleone : public Candy
 {
 public:
     Napoleone(Point pos) : Candy(pos) {type = 1;}
-    Napoleone(int x, int y): Candy(x, y){}
+    Napoleone(int x, int y): Candy(x, y){type = 1;}
     ~Napoleone() = default;
     void draw() const override;
 };
@@ -35,7 +35,7 @@ class Fruitello : public Candy
 {
 public:
     Fruitello(Point pos) : Candy(pos) {type = 2;}
-    Fruitello(int x, int y): Candy(x, y){}
+    Fruitello(int x, int y): Candy(x, y){type = 2;}
     ~Fruitello() = default;
     void draw() const override;
 };
@@ -44,7 +44,7 @@ class Magnom : public Candy
 {
 public:
     Magnom(Point pos) : Candy(pos) {type = 3;}
-    Magnom(int x, int y): Candy(x, y){}
+    Magnom(int x, int y): Candy(x, y){type = 3;}
     ~Magnom() = default;
     void draw() const override;
 };
@@ -53,7 +53,7 @@ class Chocoteuf : public Candy
 {
 public:
     Chocoteuf(Point pos) : Candy(pos) {type = 4;}
-    Chocoteuf(int x, int y): Candy(x, y){}
+    Chocoteuf(int x, int y): Candy(x, y){type = 4;}
     ~Chocoteuf() = default;
     void draw() const override;
 };
@@ -62,7 +62,7 @@ class Haribot : public Candy
 {
 public:
     Haribot(Point pos) : Candy(pos) {type = 5;}
-    Haribot(int x, int y): Candy(x, y){}
+    Haribot(int x, int y): Candy(x, y){type = 5;}
     ~Haribot() = default;
     void draw() const override;
 };
@@ -71,7 +71,7 @@ class Chique : public Candy
 {
 public:
     Chique(Point pos) : Candy(pos) {type = 6;}
-    Chique(int x, int y): Candy(x, y){}
+    Chique(int x, int y): Candy(x, y){type = 6;}
     ~Chique() = default;
     void draw() const override;
 };
