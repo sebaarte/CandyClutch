@@ -6,8 +6,7 @@
 #define FL_BROWN fl_rgb_color(150, 75, 0)
 #define FL_PURPLE fl_rgb_color(128, 0, 28)
 
-
-/////////////////////////////////////////// candy methods
+/////////////////////////////////////////// candy inherited methods
 Candy::Candy(int x, int y)
 {
     _relativepos = Point{x, y};
@@ -53,6 +52,11 @@ void Candy::setPos(Point newPos)
 {
     _relativepos = newPos;
     _absolutepos = relativeToAbsolute();
+}
+
+const int Candy::type() const
+{
+    return _type;
 }
 
 /////////////// all draw methods overriden

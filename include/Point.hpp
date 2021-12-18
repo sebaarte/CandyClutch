@@ -8,4 +8,7 @@ struct Point
     {
         return (x != other.x) || (y != other.y);
     }
+    Point xAdd(int n){return Point{x+n,y};}
+    Point yAdd(int n){return Point{x,y+n};}
 };
+

@@ -14,28 +14,7 @@ Grid::Grid()
 
         for (int x = 0; x < 7; x++)
         {
-            int r = rand() % 6 + 1;
-            switch (r)
-            {
-            case 1:
-                v1.push_back(new Napoleone(x, y));
-                break;
-            case 2:
-                v1.push_back(new Fruitello(x, y));
-                break;
-            case 3:
-                v1.push_back(new Magnom(x, y));
-                break;
-            case 4:
-                v1.push_back(new Chocoteuf(x, y));
-                break;
-            case 5:
-                v1.push_back(new Haribot(x, y));
-                break;
-            case 6:
-                v1.push_back(new Chique(x, y));
-                break;
-            }
+            v1.push_back(randomCandy(x, y));
         }
         gameGrid.push_back(v1);
     }
@@ -144,53 +123,36 @@ bool Grid::isValidMove(Point dest, Point source) const
     int destType = caseType(source, SELF);
     int sourceType = caseType(dest, SELF);
     bool sameType = (sourceType == destType);
-    // printf("source %d, dest %d\n",sourceType,destType);
-    // printf("source right %d, dest right %d\n",caseType(source,RIGHT),caseType(dest,RIGHT));
-    // printf("source dright %d, dest dright %d\n",caseType(source,DOUBLERIGHT),caseType(dest,DOUBLERIGHT));
-    printf("source left %d, dest left %d\n",caseType(source,LEFT),caseType(dest,LEFT));
-    printf("source dleft %d, dest dleft %d\n",caseType(source,DOUBLELEFT),caseType(dest,DOUBLELEFT));
-    // printf("source up %d, dest up %d\n",caseType(source,UP),caseType(dest,UP));
-    // printf("source dup %d, dest dup %d\n",caseType(source,DOUBLEUP),caseType(dest,DOUBLEUP));
-    // printf("source down %d, dest down %d\n",caseType(source,DOWN),caseType(dest,DOWN));
-    // printf("source ddown %d, dest ddown %d\n",caseType(source,DOUBLEDOWN),caseType(dest,DOUBLEDOWN));
-
-
 
     if (dest.x != source.x) // moving horizontally
     {
         if (caseType(dest, UP) == destType && (caseType(dest, DOUBLEUP) == destType || caseType(dest, DOWN) == destType))
         {
-            printf("memes cases verticales pour dest\n");
             return true;
         }
         if (caseType(source, UP) == sourceType && (caseType(source, DOUBLEUP) == sourceType || caseType(source, DOWN) == sourceType))
         {
-            printf("memes cases verticales pour source\n");
             return true;
         }
         if (caseType(dest, DOWN) == destType && caseType(dest, DOUBLEDOWN) == destType)
         {
-            printf("memes cases vers le bas pour dest\n");
             return true;
         }
         if (caseType(source, DOWN) == sourceType && caseType(source, DOUBLEDOWN) == sourceType)
         {
-            printf("memes cases vers le bas pour source\n");
             return true;
         }
         if (source.x < dest.x) // moving right
         {
             if (caseType(dest, RIGHT) == destType && (caseType(dest, DOUBLERIGHT) == destType || sameType))
             {
-                printf("memes cases horizontales pour dest\n");
                 return true;
             }
         }
         else // moving left
         {
-            if (caseType(dest, LEFT) == sourceType && (caseType(dest, DOUBLELEFT) == sourceType|| sameType))
+            if (caseType(dest, LEFT) == sourceType && (caseType(dest, DOUBLELEFT) == sourceType || sameType))
             {
-                printf("memes cases horizontales pour source\n");
                 return true;
             }
         }
@@ -199,29 +161,24 @@ bool Grid::isValidMove(Point dest, Point source) const
     {
         if (caseType(dest, LEFT) == destType && (caseType(dest, DOUBLELEFT) == destType || caseType(dest, RIGHT) == destType))
         {
-            printf("memes cases horizontales pour dest\n");
             return true;
         }
         if (caseType(source, LEFT) == sourceType && (caseType(source, DOUBLELEFT) == sourceType || caseType(source, RIGHT) == sourceType))
         {
-            printf("memes cases horizontales pour source\n");
             return true;
         }
         if (caseType(dest, RIGHT) == destType && caseType(dest, DOUBLERIGHT) == destType)
         {
-            printf("memes cases droites pour dest\n");
             return true;
         }
         if (caseType(source, RIGHT) == sourceType && caseType(source, DOUBLERIGHT) == sourceType)
         {
-            printf("memes cases droites pour sources\n");
             return true;
         }
         if (source.y < dest.y) // moving up
         {
             if (caseType(dest, UP) == destType && (caseType(dest, DOUBLEUP) == destType || sameType))
             {
-                printf("memes cases verticales pour dest\n");
                 return true;
             }
         }
@@ -229,12 +186,10 @@ bool Grid::isValidMove(Point dest, Point source) const
         {
             if (caseType(source, DOWN) == sourceType && (caseType(source, DOUBLEDOWN) == sourceType || sameType))
             {
-                printf("memes cases verticales pour source\n");
                 return true;
             }
         }
     }
-    printf("non\n");
     return false;
 }
 
@@ -249,7 +204,7 @@ int Grid::caseType(Point pos, int direction) const
         }
         else
         {
-            return gameGrid[pos.y - 1][pos.x]->type;
+            return gameGrid[pos.y - 1][pos.x]->type();
         }
     case DOUBLEUP:
         if (pos.y < 2)
@@ -258,7 +213,7 @@ int Grid::caseType(Point pos, int direction) const
         }
         else
         {
-            return gameGrid[pos.y - 2][pos.x]->type;
+            return gameGrid[pos.y - 2][pos.x]->type();
         }
     case DOWN:
         if (pos.y + 1 == GRIDSIZE)
@@ -267,7 +222,7 @@ int Grid::caseType(Point pos, int direction) const
         }
         else
         {
-            return gameGrid[pos.y + 1][pos.x]->type;
+            return gameGrid[pos.y + 1][pos.x]->type();
         }
     case DOUBLEDOWN:
         if (pos.y + 1 == GRIDSIZE || pos.y + 2 == GRIDSIZE)
@@ -276,7 +231,7 @@ int Grid::caseType(Point pos, int direction) const
         }
         else
         {
-            return gameGrid[pos.y + 2][pos.x]->type;
+            return gameGrid[pos.y + 2][pos.x]->type();
         }
 
     case LEFT:
@@ -286,7 +241,7 @@ int Grid::caseType(Point pos, int direction) const
         }
         else
         {
-            return gameGrid[pos.y][pos.x - 1]->type;
+            return gameGrid[pos.y][pos.x - 1]->type();
         }
     case DOUBLELEFT:
         if (pos.x < 2)
@@ -295,7 +250,7 @@ int Grid::caseType(Point pos, int direction) const
         }
         else
         {
-            return gameGrid[pos.y][pos.x - 2]->type;
+            return gameGrid[pos.y][pos.x - 2]->type();
         }
     case RIGHT:
         if (pos.x + 1 == GRIDSIZE)
@@ -304,7 +259,7 @@ int Grid::caseType(Point pos, int direction) const
         }
         else
         {
-            return gameGrid[pos.y][pos.x + 1]->type;
+            return gameGrid[pos.y][pos.x + 1]->type();
         }
         break;
     case DOUBLERIGHT:
@@ -314,12 +269,121 @@ int Grid::caseType(Point pos, int direction) const
         }
         else
         {
-            return gameGrid[pos.y][pos.x + 2]->type;
+            return gameGrid[pos.y][pos.x + 2]->type();
         }
 
     case SELF:
-        return gameGrid[pos.y][pos.x]->type;
+        return gameGrid[pos.y][pos.x]->type();
     default:
         return 0;
+    }
+}
+
+void Grid::refresh()
+{
+    std::vector<Point> toClear = {};
+    // clears line of same candies
+    for (auto v : gameGrid)
+    {
+        for (auto j : v)
+        {
+            Point tempPos = j->relativePos();
+            const int tempType = j->type();
+            for (size_t i = 2; i < 4; i++)
+            {
+                if (caseType(tempPos, i) == j->type() && caseType(tempPos, i + 9) == j->type())
+                {
+                    if (i == 2)
+                    {
+                        toClear.push_back(tempPos);
+                        toClear.push_back(tempPos.xAdd(1));
+                        toClear.push_back(tempPos.xAdd(2));
+                        for (size_t row = 3;; i++)
+                        {
+                            if (caseType(tempPos.xAdd(row), SELF) == tempType)
+                            {
+                                toClear.push_back(tempPos.xAdd(row));
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        toClear.push_back(tempPos);
+                        toClear.push_back(tempPos.yAdd(1));
+                        toClear.push_back(tempPos.yAdd(2));
+                        for (size_t column = 3;; i++)
+                        {
+                            if (caseType(tempPos.yAdd(column), SELF) == tempType)
+                            {
+                                toClear.push_back(tempPos.yAdd(column));
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for (Point p : toClear)
+    {
+        remove(p);
+    }
+    fillEmpty();
+}
+
+void Grid::remove(Point p)
+{
+    gameGrid[p.y][p.x] = new Empty(p);
+}
+
+void Grid::fillEmpty()
+{
+    for (auto i : gameGrid)
+    {
+        for (auto j : i)
+        {
+            if (j->type() == -1)
+            {
+                if (gameGrid[0][j->relativePos().x]->type() != -1)
+                {
+                    for (size_t row = 0; row < j->relativePos().y + 1; row++)
+                    {
+                        gameGrid[row][j->relativePos().x] = randomCandy(j->relativePos().y, row);
+                    }
+                }
+                else
+                {
+                    Point start = j->relativePos();
+                    
+                }
+            }
+        }
+    }
+}
+
+Candy *Grid::randomCandy(int x, int y)
+{
+    int r = rand() % 6 + 1;
+    switch (r)
+    {
+    case 1:
+        return new Napoleone(x,y);
+    case 2:
+        return new Fruitello(x,y);
+    case 3:
+        return new Magnom(x,y);
+    case 4:
+        return new Chocoteuf(x,y);
+    case 5:
+        return new Haribot(x,y);
+    case 6:
+        return new Chique(x,y);
     }
 }

@@ -7,8 +7,9 @@ protected:
     Point _relativepos;
     Point _absolutepos;
     Point relativeToAbsolute();
+    int _type;
 public:
-    int type;
+    const int type() const;
     Candy(Point pos) : _relativepos(pos) {_absolutepos = relativeToAbsolute();}
     Candy(int x, int y);
     virtual void draw() const  = 0;
@@ -25,8 +26,8 @@ public:
 class Napoleone : public Candy
 {
 public:
-    Napoleone(Point pos) : Candy(pos) {type = 1;}
-    Napoleone(int x, int y): Candy(x, y){type = 1;}
+    Napoleone(Point pos) : Candy(pos) {_type = 1;}
+    Napoleone(int x, int y): Candy(x, y){_type = 1;}
     ~Napoleone() = default;
     void draw() const override;
 };
@@ -34,8 +35,8 @@ public:
 class Fruitello : public Candy
 {
 public:
-    Fruitello(Point pos) : Candy(pos) {type = 2;}
-    Fruitello(int x, int y): Candy(x, y){type = 2;}
+    Fruitello(Point pos) : Candy(pos) {_type = 2;}
+    Fruitello(int x, int y): Candy(x, y){_type = 2;}
     ~Fruitello() = default;
     void draw() const override;
 };
@@ -43,8 +44,8 @@ public:
 class Magnom : public Candy
 {
 public:
-    Magnom(Point pos) : Candy(pos) {type = 3;}
-    Magnom(int x, int y): Candy(x, y){type = 3;}
+    Magnom(Point pos) : Candy(pos) {_type = 3;}
+    Magnom(int x, int y): Candy(x, y){_type = 3;}
     ~Magnom() = default;
     void draw() const override;
 };
@@ -52,8 +53,8 @@ public:
 class Chocoteuf : public Candy
 {
 public:
-    Chocoteuf(Point pos) : Candy(pos) {type = 4;}
-    Chocoteuf(int x, int y): Candy(x, y){type = 4;}
+    Chocoteuf(Point pos) : Candy(pos) {_type = 4;}
+    Chocoteuf(int x, int y): Candy(x, y){_type = 4;}
     ~Chocoteuf() = default;
     void draw() const override;
 };
@@ -61,8 +62,8 @@ public:
 class Haribot : public Candy
 {
 public:
-    Haribot(Point pos) : Candy(pos) {type = 5;}
-    Haribot(int x, int y): Candy(x, y){type = 5;}
+    Haribot(Point pos) : Candy(pos) {_type = 5;}
+    Haribot(int x, int y): Candy(x, y){_type = 5;}
     ~Haribot() = default;
     void draw() const override;
 };
@@ -70,8 +71,8 @@ public:
 class Chique : public Candy
 {
 public:
-    Chique(Point pos) : Candy(pos) {type = 6;}
-    Chique(int x, int y): Candy(x, y){type = 6;}
+    Chique(Point pos) : Candy(pos) {_type = 6;}
+    Chique(int x, int y): Candy(x, y){_type = 6;}
     ~Chique() = default;
     void draw() const override;
 };
@@ -79,8 +80,8 @@ public:
 class Empty: public Candy
 {
 public:
-    Empty(Point pos) : Candy(pos) {}
-    Empty(int x, int y): Candy(x, y){}
+    Empty(Point pos) : Candy(pos) {_type = -1;}
+    Empty(int x, int y): Candy(x, y){_type = -1;}
     ~Empty() = default;
     void draw() const override;
 };

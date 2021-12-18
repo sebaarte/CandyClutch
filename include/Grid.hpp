@@ -11,10 +11,15 @@ private:
     std::vector<std::vector<Candy*>> gameGrid;
     void swap(Point pos1, Point pos2);
     int caseType(Point pos1,int direction) const;
+    void remove(Point pos);
+    void fillEmpty();
+    Candy *randomCandy(int x, int y);
+
 public:
     Grid();
     ~Grid();
     void render() const;
+    void refresh();
     Candy *grab(Point mouseLoc,Candy *grabbed);
     void ungrab(Point mouseLoc,Candy *grabbed);
     bool isAdjacent(Point pos1, Point pos2) const;

@@ -8,6 +8,7 @@ PhysicsEngine::~PhysicsEngine() { g.~Grid(); }
 
 void PhysicsEngine::draw()
 {
+    g.refresh();
     g.render();
     
 }
