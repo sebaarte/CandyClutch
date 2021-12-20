@@ -3,6 +3,7 @@
 #include "constantes.hpp"
 #include "stdlib.h"
 #include "Candies.hpp"
+#include "iostream"
 
 Grid::Grid()
 {
@@ -33,6 +34,7 @@ Grid::~Grid()
 
 void Grid::render() const
 {
+    // draws the grid
     for (int i = 0; i < 7; i++)
     {
         for (int j = 0; j < 7; j++)
@@ -59,7 +61,7 @@ Candy *Grid::grab(Point mouseLoc, Candy *grabbed)
         {
             for (auto j : i)
             {
-                if (j->contains(mouseLoc))
+                if (j->contains(mouseLoc) && j->type() != -1)
                 {
                     j->grab(mouseLoc);
                     return j;
@@ -81,7 +83,7 @@ void Grid::ungrab(Point mouseLoc, Candy *grabbed)
     {
         for (auto j : i)
         {
-            if (j->contains(mouseLoc) && isAdjacent(j->relativePos(), grabbed->relativePos()) && isValidMove(j->relativePos(), grabbed->relativePos()))
+            if (j->type() != -1 && j->contains(mouseLoc) && isAdjacent(j->relativePos(), grabbed->relativePos()) && isValidMove(j->relativePos(), grabbed->relativePos()))
             {
                 swap(j->relativePos(), grabbed->relativePos());
                 return;
@@ -93,8 +95,8 @@ void Grid::ungrab(Point mouseLoc, Candy *grabbed)
 
 void Grid::swap(Point pos1, Point pos2)
 {
-    gameGrid[pos1.y][pos1.x]->setPos(pos2);
-    gameGrid[pos2.y][pos2.x]->setPos(pos1);
+    gameGrid.at(pos1.y).at(pos1.x)->setPos(pos2);
+    gameGrid.at(pos2.y).at(pos2.x)->setPos(pos1);
     std::iter_swap(gameGrid[pos1.y].begin() + pos1.x, gameGrid[pos2.y].begin() + pos2.x);
 }
 
@@ -119,7 +121,7 @@ bool Grid::isAdjacent(Point pos1, Point pos2) const
 
 bool Grid::isValidMove(Point dest, Point source) const
 {
-    // big ugly function to check if the move creates a alignement of 3 Candies
+    // big ugly function to check if the move creates an alignement of 3 Candies
     int destType = caseType(source, SELF);
     int sourceType = caseType(dest, SELF);
     bool sameType = (sourceType == destType);
@@ -151,7 +153,7 @@ bool Grid::isValidMove(Point dest, Point source) const
         }
         else // moving left
         {
-            if (caseType(dest, LEFT) == sourceType && (caseType(dest, DOUBLELEFT) == sourceType || sameType))
+            if (caseType(dest, LEFT) == destType && (caseType(dest, DOUBLELEFT) == destType || sameType))
             {
                 return true;
             }
@@ -175,16 +177,24 @@ bool Grid::isValidMove(Point dest, Point source) const
         {
             return true;
         }
-        if (source.y < dest.y) // moving up
+        if (source.y > dest.y) // moving up
         {
             if (caseType(dest, UP) == destType && (caseType(dest, DOUBLEUP) == destType || sameType))
+            {
+                return true;
+            }
+            if (caseType(source, DOWN) == sourceType && (caseType(source, DOUBLEDOWN) == sourceType || sameType))
             {
                 return true;
             }
         }
         else // moving down
         {
-            if (caseType(source, DOWN) == sourceType && (caseType(source, DOUBLEDOWN) == sourceType || sameType))
+            if (caseType(source, UP) == sourceType && (caseType(source, DOUBLEUP) == sourceType || sameType))
+            {
+                return true;
+            }
+            if (caseType(dest, DOWN) == destType && (caseType(dest, DOUBLEDOWN) == destType || sameType))
             {
                 return true;
             }
@@ -195,135 +205,152 @@ bool Grid::isValidMove(Point dest, Point source) const
 
 int Grid::caseType(Point pos, int direction) const
 {
-    switch (direction)
+    try
     {
-    case UP:
-        if (pos.y == 0)
-        {
-            return 0;
-        }
-        else
-        {
-            return gameGrid[pos.y - 1][pos.x]->type();
-        }
-    case DOUBLEUP:
-        if (pos.y < 2)
-        {
-            return 0;
-        }
-        else
-        {
-            return gameGrid[pos.y - 2][pos.x]->type();
-        }
-    case DOWN:
-        if (pos.y + 1 == GRIDSIZE)
-        {
-            return 0;
-        }
-        else
-        {
-            return gameGrid[pos.y + 1][pos.x]->type();
-        }
-    case DOUBLEDOWN:
-        if (pos.y + 1 == GRIDSIZE || pos.y + 2 == GRIDSIZE)
-        {
-            return 0;
-        }
-        else
-        {
-            return gameGrid[pos.y + 2][pos.x]->type();
-        }
 
-    case LEFT:
-        if (pos.x == 0)
+        switch (direction)
         {
-            return 0;
-        }
-        else
-        {
-            return gameGrid[pos.y][pos.x - 1]->type();
-        }
-    case DOUBLELEFT:
-        if (pos.x < 2)
-        {
-            return 0;
-        }
-        else
-        {
-            return gameGrid[pos.y][pos.x - 2]->type();
-        }
-    case RIGHT:
-        if (pos.x + 1 == GRIDSIZE)
-        {
-            return 0;
-        }
-        else
-        {
-            return gameGrid[pos.y][pos.x + 1]->type();
-        }
-        break;
-    case DOUBLERIGHT:
-        if (pos.x + 1 == GRIDSIZE || pos.x + 2 == GRIDSIZE)
-        {
-            return 0;
-        }
-        else
-        {
-            return gameGrid[pos.y][pos.x + 2]->type();
-        }
+        case UP:
+            if (pos.y == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                return gameGrid.at(pos.y - 1).at(pos.x)->type();
+            }
+        case DOUBLEUP:
+            if (pos.y < 2)
+            {
+                return 0;
+            }
+            else
+            {
+                return gameGrid.at(pos.y - 2).at(pos.x)->type();
+            }
+        case DOWN:
+            if (pos.y + 1 == GRIDSIZE)
+            {
+                return 0;
+            }
+            else
+            {
+                return gameGrid.at(pos.y + 1).at(pos.x)->type();
+            }
+        case DOUBLEDOWN:
+            if (pos.y >= GRIDSIZE - 2)
+            {
+                return 0;
+            }
+            else
+            {
+                return gameGrid.at(pos.y + 2).at(pos.x)->type();
+            }
 
-    case SELF:
-        return gameGrid[pos.y][pos.x]->type();
-    default:
-        return 0;
+        case LEFT:
+            if (pos.x == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                return gameGrid.at(pos.y).at(pos.x - 1)->type();
+            }
+        case DOUBLELEFT:
+            if (pos.x < 2)
+            {
+                return 0;
+            }
+            else
+            {
+                return gameGrid.at(pos.y).at(pos.x - 2)->type();
+            }
+        case RIGHT:
+            if (pos.x + 1 == GRIDSIZE)
+            {
+                return 0;
+            }
+            else
+            {
+                return gameGrid.at(pos.y).at(pos.x + 1)->type();
+            }
+            break;
+        case DOUBLERIGHT:
+            if (pos.x >= GRIDSIZE - 2)
+            {
+                return 0;
+            }
+            else
+            {
+                return gameGrid.at(pos.y).at(pos.x + 2)->type();
+            }
+
+        case SELF:
+            if (pos.x >= GRIDSIZE || pos.x <= -1 || pos.y >= GRIDSIZE || pos.y <= -1)
+            {
+                return 0;
+            }
+            return gameGrid.at(pos.y).at(pos.x)->type();
+        default:
+            return 0;
+        }
+    }
+    catch (const std::out_of_range &e)
+    {
+        pos.print();
+        std::cout << direction << "\n";
+        std::cerr << e.what() << '\n';
     }
 }
 
 void Grid::refresh()
 {
-    std::vector<Point> toClear = {};
+    std::vector<Point> toClear;
     // clears line of same candies
     for (auto v : gameGrid)
     {
         for (auto j : v)
         {
-            Point tempPos = j->relativePos();
-            const int tempType = j->type();
-            for (size_t i = 2; i < 4; i++)
+            if (j->type() != -1)
             {
-                if (caseType(tempPos, i) == j->type() && caseType(tempPos, i + 9) == j->type())
+                Point tempPos = j->relativePos();
+                const int tempType = j->type();
+                for (size_t i = 2; i < 4; i++)
                 {
-                    if (i == 2)
+                    if (caseType(tempPos, i) == tempType && caseType(tempPos, i + 9) == tempType)
                     {
-                        toClear.push_back(tempPos);
-                        toClear.push_back(tempPos.xAdd(1));
-                        toClear.push_back(tempPos.xAdd(2));
-                        for (size_t row = 3;; i++)
+                        if (i == 2)
                         {
-                            if (caseType(tempPos.xAdd(row), SELF) == tempType)
+                            toClear.push_back(tempPos);
+                            toClear.push_back(tempPos.xAdd(1));
+                            toClear.push_back(tempPos.xAdd(2));
+                            for (size_t row = 3; row < GRIDSIZE; row++)
                             {
-                                toClear.push_back(tempPos.xAdd(row));
-                            }
-                            else
-                            {
-                                break;
+                                if (caseType(tempPos.xAdd(row), SELF) == tempType)
+                                {
+                                    toClear.push_back(tempPos.xAdd(row));
+                                }
+                                else
+                                {
+                                    break;
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        toClear.push_back(tempPos);
-                        toClear.push_back(tempPos.yAdd(1));
-                        toClear.push_back(tempPos.yAdd(2));
-                        for (size_t column = 3;; i++)
+                        else
                         {
-                            if (caseType(tempPos.yAdd(column), SELF) == tempType)
+                            toClear.push_back(tempPos);
+                            toClear.push_back(tempPos.yAdd(1));
+                            toClear.push_back(tempPos.yAdd(2));
+                            for (size_t col = 3; col < GRIDSIZE; col++)
                             {
-                                toClear.push_back(tempPos.yAdd(column));
-                            }
-                            else
-                            {
-                                break;
+                                if (caseType(tempPos.yAdd(col), SELF) == tempType)
+                                {
+                                    toClear.push_back(tempPos.yAdd(col));
+                                }
+                                else
+                                {
+                                    break;
+                                }
                             }
                         }
                     }
@@ -335,36 +362,49 @@ void Grid::refresh()
     {
         remove(p);
     }
-    fillEmpty();
+    fillEmpty();    
 }
 
 void Grid::remove(Point p)
 {
-    gameGrid[p.y][p.x] = new Empty(p);
+
+    gameGrid.at(p.y).at(p.x) = new Empty(p);
 }
 
 void Grid::fillEmpty()
 {
-    for (auto i : gameGrid)
-    {
-        for (auto j : i)
+    
+        for (int i = GRIDSIZE - 1; i > -1; i--) // for each y starting from the bottom
         {
-            if (j->type() == -1)
+            for (int j = 0; j < GRIDSIZE; j++) // for each x starting from left
             {
-                if (gameGrid[0][j->relativePos().x]->type() != -1)
+                if (gameGrid.at(i).at(j)->type() == -1) // if the case is empty
                 {
-                    for (size_t row = 0; row < j->relativePos().y + 1; row++)
+                    std::cout << "y " << i << " x " << j << std::endl;
+                    int start = i;
+                    for (int row = i; row > -1; row--) // going up from the case
                     {
-                        gameGrid[row][j->relativePos().x] = randomCandy(j->relativePos().y, row);
+                        if (row == 0 && gameGrid.at(0).at(j)->type() == -1) // if all cases up to the top are empty
+                        {
+                            for (int k = i; k > -1; k--) // fill the empty column with random candies
+                            {
+                                gameGrid.at(k).at(j) = randomCandy(j, k);
+                            }
+                            return;
+                        }
+                        else if (gameGrid.at(row).at(j)->type() != -1) // there's a candy somewhere above the empty case
+                        {
+                            swap({j,start},{j,row});
+                            //print();
+                            //std::cout << "y=" << " " << row << "type=" << " " << gameGrid.at(row).at(j)->type() << std::endl <<std::endl;
+                            break;
+                        }
+                        //print();
+                        //std::cout << "y=" << " " << row << "type=" << " " << gameGrid.at(row).at(j)->type() << std::endl<<std::endl;
                     }
-                }
-                else
-                {
-                    Point start = j->relativePos();
                     
                 }
             }
-        }
     }
 }
 
@@ -374,16 +414,28 @@ Candy *Grid::randomCandy(int x, int y)
     switch (r)
     {
     case 1:
-        return new Napoleone(x,y);
+        return new Napoleone(x, y);
     case 2:
-        return new Fruitello(x,y);
+        return new Fruitello(x, y);
     case 3:
-        return new Magnom(x,y);
+        return new Magnom(x, y);
     case 4:
-        return new Chocoteuf(x,y);
+        return new Chocoteuf(x, y);
     case 5:
-        return new Haribot(x,y);
+        return new Haribot(x, y);
     case 6:
-        return new Chique(x,y);
+        return new Chique(x, y);
+    }
+}
+
+void Grid::print()
+{
+    for (auto i : gameGrid)
+    {
+        for (auto j : i)
+        {
+            std::cout << j->type() << " ";
+        }
+        std::cout << "\n";
     }
 }

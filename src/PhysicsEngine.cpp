@@ -1,16 +1,16 @@
 #include "PhysicsEngine.hpp"
 #include "Fl/fl_draw.H"
 #include "constantes.hpp"
+#include "iostream"
 
 PhysicsEngine::PhysicsEngine() : g{} {}
 
 PhysicsEngine::~PhysicsEngine() { g.~Grid(); }
 
-void PhysicsEngine::draw()
+void PhysicsEngine::refresh()
 {
-    g.refresh();
     g.render();
-    
+    g.refresh();
 }
 void PhysicsEngine::mouseMove(Point mouseLoc)
 {

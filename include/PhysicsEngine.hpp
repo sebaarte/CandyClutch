@@ -13,7 +13,7 @@ class PhysicsEngine{
 public:
     PhysicsEngine();
     ~PhysicsEngine();
-    void draw();
+    void refresh();
     void mouseMove(Point mouseLoc);
     void mouseClick(Point mouseLoc);
     void drag(Point mouseLoc);

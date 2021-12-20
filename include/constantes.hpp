@@ -16,5 +16,5 @@ constexpr int LEFT = 4;
 constexpr int SELF = 5;
 constexpr int DOUBLEUP = 10;
 constexpr int DOUBLERIGHT = 11;
-constexpr int DOUBLELEFT = 12;
-constexpr int DOUBLEDOWN = 13;
+constexpr int DOUBLELEFT = 13;
+constexpr int DOUBLEDOWN = 12;

@@ -1,4 +1,5 @@
 #pragma once
+#include "iostream"
 
 struct Point
 {
@@ -10,5 +11,6 @@ struct Point
     }
     Point xAdd(int n){return Point{x+n,y};}
     Point yAdd(int n){return Point{x,y+n};}
+    void print(){std::cout<< x << " " << y << std::endl;}
 };
 

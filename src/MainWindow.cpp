@@ -11,7 +11,7 @@ MainWindow::MainWindow() : Fl_Window(windowX, windowY, windowSize, windowSize, "
 void MainWindow::draw()
 {
 	Fl_Window::draw();
-	physicsEngine.draw();
+	physicsEngine.refresh();
 }
 
 int MainWindow::handle(int event)

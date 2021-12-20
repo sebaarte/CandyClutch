@@ -9,18 +9,16 @@ protected:
     Point relativeToAbsolute();
     int _type;
 public:
-    const int type() const;
     Candy(Point pos) : _relativepos(pos) {_absolutepos = relativeToAbsolute();}
     Candy(int x, int y);
     virtual void draw() const  = 0;
-    void mouseMove(Point mouseLoc);
-    void mouseClick(Point mouseLoc);
     bool contains(Point mouseLoc);
     const Point absolutePos() const;
     const Point relativePos() const;
     void grab(Point mouseLoc);
     void ungrab();
     void setPos(Point newPos);
+    const int type() const;
 };
 
 class Napoleone : public Candy
