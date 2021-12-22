@@ -1,11 +1,11 @@
 // pure number constants
-constexpr int windowSize = 700;
-constexpr int windowX = 800;
+constexpr int windowSize = 900;
+constexpr int windowX = 900;
 constexpr int windowY = 500;
-constexpr int offset = 20;
+constexpr int OFFSET = 20;
 constexpr int squareSize = 80;
-constexpr int candySize = 60;
-constexpr int GRIDSIZE = 7;
+constexpr int CANDYSIZE = 60;
+constexpr int GRIDSIZE = 9;
 
 //game constants
 constexpr double refreshRate = 1.0/60;

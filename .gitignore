@@ -1,3 +1,7 @@
 exec
 Project.pdf
 obj/*
+.vscode
+*.d
+*.o
+.gitignore

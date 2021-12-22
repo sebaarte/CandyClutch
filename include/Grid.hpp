@@ -19,7 +19,7 @@ private:
 public:
     Grid();
     ~Grid();
-    void render() const;
+    void render(Candy *grabbed) const;
     void refresh();
     Candy *grab(Point mouseLoc, Candy *grabbed);
     void ungrab(Point mouseLoc, Candy *grabbed);

@@ -1,22 +1,37 @@
 #include "Candies.hpp"
 #include "FL/fl_draw.H"
 #include "constantes.hpp"
-
-#define FL_PINK fl_rgb_color(255, 192, 203)
-#define FL_BROWN fl_rgb_color(150, 75, 0)
-#define FL_PURPLE fl_rgb_color(128, 0, 28)
+#include "memory"
 
 /////////////////////////////////////////// candy inherited methods
 Candy::Candy(int x, int y)
 {
-    _relativepos = Point{x, y};
+    _relativepos = {x, y};
+    _absolutepos = relativeToAbsolute(); 
+}
+
+Candy::Candy(int x, int y, std::unique_ptr<Animation> anim)
+{
+    _relativepos = {x, y};
     _absolutepos = relativeToAbsolute();
+    animation = std::move(anim);
+}
+
+Candy::Candy(Point pos) : _absolutepos{pos}
+{
+    _absolutepos = relativeToAbsolute();
+}
+
+Candy::Candy(Point pos, std::unique_ptr<Animation> anim) : _relativepos{pos}
+{
+    _absolutepos = relativeToAbsolute();
+    animation = std::move(anim);
 }
 
 bool Candy::contains(Point mouseLoc)
 {
     const Point candyPos = absolutePos();
-    if ((mouseLoc.x <= candyPos.x + candySize / 2) && (mouseLoc.x >= candyPos.x - candySize / 2) && (mouseLoc.y <= candyPos.y + candySize / 2) && (mouseLoc.y >= candyPos.y - candySize / 2))
+    if ((mouseLoc.x <= candyPos.x + CANDYSIZE / 2) && (mouseLoc.x >= candyPos.x - CANDYSIZE / 2) && (mouseLoc.y <= candyPos.y + CANDYSIZE / 2) && (mouseLoc.y >= candyPos.y - CANDYSIZE / 2))
     {
         return True;
     }
@@ -25,12 +40,23 @@ bool Candy::contains(Point mouseLoc)
 
 Point Candy::relativeToAbsolute()
 {
-    return Point{offset + candySize / 2 + 10 + _relativepos.x * 90, offset + candySize / 2 + 10 + _relativepos.y * 90};
+    return Point{OFFSET + CANDYSIZE / 2 + 10 + _relativepos.x * 90, OFFSET + CANDYSIZE / 2 + 10 + _relativepos.y * 90};
 }
 
+void Candy::grab(Point mouseLoc)
+{
+    _absolutepos = mouseLoc;
+    if (!grabbed())
+    {
+        animation.release();
+        animation = std::make_unique<Grabbed>(_absolutepos, color);
+    }
+}
 void Candy::ungrab()
 {
     _absolutepos = relativeToAbsolute();
+    animation.release();
+    animation = std::make_unique<NoAnimation>(_absolutepos, color);
 }
 
 const Point Candy::absolutePos() const
@@ -41,11 +67,6 @@ const Point Candy::absolutePos() const
 const Point Candy::relativePos() const
 {
     return static_cast<const Point>(_relativepos);
-}
-
-void Candy::grab(Point mouseLoc)
-{
-    _absolutepos = mouseLoc;
 }
 
 void Candy::setPos(Point newPos)
@@ -59,37 +80,119 @@ const int Candy::type() const
     return _type;
 }
 
-/////////////// all draw methods overriden
-void Napoleone::draw() const
+void Candy::translate()
 {
-    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_YELLOW);
+    _absolutepos = relativeToAbsolute();
+    animation.release();
+    animation = std::make_unique<Translation>(_absolutepos, color);
 }
 
-void Fruitello::draw() const
+void Candy::refreshAnimation()
 {
-    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_PINK);
+    if (!animation)
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    else
+    {
+        animation->refresh(_absolutepos,color);
+    }
 }
 
-void Magnom::draw() const
+void Candy::suppress()
 {
-    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_BLACK);
+    if (!animation->moving())
+    {
+        animation.release();
+        animation = std::make_unique<Suppression>(_absolutepos,color);
+    }
+    
+}
+//////////////////////////////////////////////////// all draw methods overriden
+void Napoleone::draw()
+{
+    if (!animation)
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    else if (animation->isOver())
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    
+    animation->animate();
 }
 
-void Chocoteuf::draw() const
+void Fruitello::draw()
 {
-    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_BROWN);
+    if (!animation)
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    else if (animation->isOver())
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    
+    animation->animate();
 }
 
-void Haribot::draw() const
+void Magnom::draw()
 {
-    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_PURPLE);
+    if (!animation)
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    else if (animation->isOver())
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    
+    animation->animate();
 }
 
-void Chique::draw() const
+void Chocoteuf::draw()
 {
-    fl_draw_box(FL_FLAT_BOX, _absolutepos.x - candySize / 2, _absolutepos.y - candySize / 2, candySize, candySize, FL_BLUE);
+    if (!animation)
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    else if (animation->isOver())
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    
+    animation->animate();
 }
 
-void Empty::draw() const
+void Haribot::draw()
+{
+    if (!animation)
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    else if (animation->isOver())
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    
+    animation->animate();
+}
+
+void Chique::draw()
+{
+    if (!animation)
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    else if (animation->isOver())
+    {
+        animation = std::make_unique<NoAnimation>(_absolutepos, color);
+    }
+    
+    animation->animate();
+}
+
+void Empty::draw()
 {
 }

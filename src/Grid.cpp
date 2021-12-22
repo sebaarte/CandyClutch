@@ -4,16 +4,17 @@
 #include "stdlib.h"
 #include "Candies.hpp"
 #include "iostream"
+#include "memory"
 
 Grid::Grid()
 {
-    //generates a 7x7 grid filled with random Candies
-    for (int y = 0; y < 7; y++)
+    //generates a 9x9 grid filled with random Candies
+    for (int y = 0; y < GRIDSIZE; y++)
     {
         // Vector to store column elements
         std::vector<Candy *> v1;
 
-        for (int x = 0; x < 7; x++)
+        for (int x = 0; x < GRIDSIZE; x++)
         {
             v1.push_back(randomCandy(x, y));
         }
@@ -32,24 +33,35 @@ Grid::~Grid()
     }
 }
 
-void Grid::render() const
+void Grid::render(Candy *grabbed) const
 {
-    // draws the grid
-    for (int i = 0; i < 7; i++)
+    // draws the first layer (grid)
+    for (int i = 0; i < GRIDSIZE; i++)
     {
-        for (int j = 0; j < 7; j++)
+        for (int j = 0; j < GRIDSIZE; j++)
         {
-            fl_draw_box(FL_FLAT_BOX, offset + j * 90, offset + i * 90, squareSize, squareSize, FL_WHITE);
+            fl_draw_box(FL_FLAT_BOX, OFFSET + j * 90, OFFSET + i * 90, squareSize, squareSize, FL_WHITE);
         }
     }
 
-    // displays different candies in the window
-    for (int y = 0; y < 7; y++)
+    // displays second layer (ungrabbed candies)
+    for (auto i : gameGrid)
     {
-        for (int x = 0; x < 7; x++)
+        for (auto j : i)
         {
-            gameGrid[y][x]->draw();
+            if (!j->grabbed())
+            {
+                j->draw();
+            }
         }
+    }
+    // draws third layer (animations)
+    // TODO
+
+    // draws last layer (grabbed candy)
+    if (grabbed)
+    {
+        grabbed->draw();
     }
 }
 
@@ -85,19 +97,23 @@ void Grid::ungrab(Point mouseLoc, Candy *grabbed)
         {
             if (j->type() != -1 && j->contains(mouseLoc) && isAdjacent(j->relativePos(), grabbed->relativePos()) && isValidMove(j->relativePos(), grabbed->relativePos()))
             {
+                grabbed->ungrab();
                 swap(j->relativePos(), grabbed->relativePos());
                 return;
             }
         }
     }
-    grabbed->setPos(grabbed->relativePos());
+    grabbed->ungrab();
 }
 
 void Grid::swap(Point pos1, Point pos2)
 {
     gameGrid.at(pos1.y).at(pos1.x)->setPos(pos2);
+    gameGrid.at(pos1.y).at(pos1.x)->refreshAnimation();
     gameGrid.at(pos2.y).at(pos2.x)->setPos(pos1);
+    gameGrid.at(pos2.y).at(pos2.x)->refreshAnimation();
     std::iter_swap(gameGrid[pos1.y].begin() + pos1.x, gameGrid[pos2.y].begin() + pos2.x);
+    
 }
 
 bool Grid::isAdjacent(Point pos1, Point pos2) const
@@ -362,49 +378,54 @@ void Grid::refresh()
     {
         remove(p);
     }
-    fillEmpty();    
+    fillEmpty();
 }
 
 void Grid::remove(Point p)
 {
-
-    gameGrid.at(p.y).at(p.x) = new Empty(p);
+    if (gameGrid.at(p.y).at(p.x)->animationOver())
+    {
+        gameGrid.at(p.y).at(p.x) = new Empty(p);
+    }
+    else
+    {
+        gameGrid.at(p.y).at(p.x)->suppress();
+    }
+    
+    
+    
 }
 
 void Grid::fillEmpty()
 {
-    
-        for (int i = GRIDSIZE - 1; i > -1; i--) // for each y starting from the bottom
+
+    for (int i = GRIDSIZE - 1; i > -1; i--) // for each y starting from the bottom
+    {
+        for (int j = 0; j < GRIDSIZE; j++) // for each x starting from left
         {
-            for (int j = 0; j < GRIDSIZE; j++) // for each x starting from left
+            if (gameGrid.at(i).at(j)->type() == -1) // if the case is empty
             {
-                if (gameGrid.at(i).at(j)->type() == -1) // if the case is empty
+                int start = i;
+                for (int row = i; row > -1; row--) // going up from the case
                 {
-                    std::cout << "y " << i << " x " << j << std::endl;
-                    int start = i;
-                    for (int row = i; row > -1; row--) // going up from the case
+                    if (row == 0 && gameGrid.at(0).at(j)->type() == -1) // if all cases up to the top are empty
                     {
-                        if (row == 0 && gameGrid.at(0).at(j)->type() == -1) // if all cases up to the top are empty
+                        for (int k = i; k > -1; k--) // fill the empty column with random candies
                         {
-                            for (int k = i; k > -1; k--) // fill the empty column with random candies
-                            {
-                                gameGrid.at(k).at(j) = randomCandy(j, k);
-                            }
-                            return;
+                            gameGrid.at(k).at(j) = randomCandy(j, k);
+                            //gameGrid.at(k).at(j)->translate();
+                            gameGrid.at(k).at(j)->refreshAnimation();
                         }
-                        else if (gameGrid.at(row).at(j)->type() != -1) // there's a candy somewhere above the empty case
-                        {
-                            swap({j,start},{j,row});
-                            //print();
-                            //std::cout << "y=" << " " << row << "type=" << " " << gameGrid.at(row).at(j)->type() << std::endl <<std::endl;
-                            break;
-                        }
-                        //print();
-                        //std::cout << "y=" << " " << row << "type=" << " " << gameGrid.at(row).at(j)->type() << std::endl<<std::endl;
+                        return;
                     }
-                    
+                    else if (gameGrid.at(row).at(j)->type() != -1) // there's a candy somewhere above the empty case
+                    {
+                        swap({j, start}, {j, row});
+                        break;
+                    }
                 }
             }
+        }
     }
 }
 

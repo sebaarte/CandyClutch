@@ -9,7 +9,7 @@ PhysicsEngine::~PhysicsEngine() { g.~Grid(); }
 
 void PhysicsEngine::refresh()
 {
-    g.render();
+    g.render(grabbed);
     g.refresh();
 }
 void PhysicsEngine::mouseMove(Point mouseLoc)
@@ -22,7 +22,7 @@ void PhysicsEngine::keyPressed(int /*keyCode*/) { exit(0); }
 
 void PhysicsEngine::drag(Point mouseLoc)
 {
-        grabbed = g.grab(mouseLoc,grabbed);
+    grabbed = g.grab(mouseLoc,grabbed);
 }
 
 void PhysicsEngine::undrag(Point mouseLoc)
