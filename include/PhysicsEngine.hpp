@@ -10,6 +10,7 @@ class PhysicsEngine{
 // mainly calls Grid methods
     Grid g;
     Candy *grabbed = nullptr;
+    bool started = false;
 public:
     PhysicsEngine();
     ~PhysicsEngine();

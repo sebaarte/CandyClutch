@@ -1,14 +1,16 @@
-// pure number constants
-constexpr int windowSize = 900;
-constexpr int windowX = 900;
-constexpr int windowY = 500;
-constexpr int OFFSET = 20;
-constexpr int squareSize = 80;
+// fltk args constants
+constexpr int WINDOWSIZE = 900;
+constexpr int WINDOWX = 900;
+constexpr int WINDOWY = 500;
+constexpr int SQUARESIZE = 80;
 constexpr int CANDYSIZE = 60;
-constexpr int GRIDSIZE = 9;
-
-//game constants
+constexpr int OFFSET = 20;
 constexpr double refreshRate = 1.0/60;
+constexpr int HELPTIME = 1800;
+
+// personal code constants
+
+constexpr int GRIDSIZE = 9;
 constexpr int UP = 1;
 constexpr int RIGHT = 2;
 constexpr int DOWN = 3;

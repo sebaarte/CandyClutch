@@ -27,13 +27,18 @@ Suppression::Suppression(Point pos, Fl_Color color) : Animation(pos, color)
     duration = 30;
 
 }
+Slide::Slide(Point startpos,Fl_Color color,Point relativeDest) : Animation(startpos,color)
+{
+    dest = relativeDest.toAbsolute();
+    
+
+}
 
 //////////////////////////// miscelanous Animation methods
 
-void Animation::refresh(Point pos, Fl_Color color)
+void Animation::refresh(Point pos)
 {
     _pos = pos;
-    _color = color;
 }
 
 /////////////////////////////////// different animations
@@ -70,5 +75,12 @@ void Grabbed::animate()
 
 void Suppression::animate()
 {
-    fl_draw_box(FL_FLAT_BOX, _pos.x - CANDYSIZE / 2+(counter*2), _pos.y - CANDYSIZE / 2 + (counter*2), CANDYSIZE-(counter*2), CANDYSIZE- (counter*2), _color);
+    fl_draw_box(FL_FLAT_BOX, _pos.x - CANDYSIZE / 2+(counter), _pos.y - CANDYSIZE / 2 + (counter), CANDYSIZE-(counter*2), CANDYSIZE- (counter*2), _color);
+    counter++;
+}
+
+void Slide::animate()
+{
+
+
 }

@@ -43,10 +43,10 @@ Point Candy::relativeToAbsolute()
     return Point{OFFSET + CANDYSIZE / 2 + 10 + _relativepos.x * 90, OFFSET + CANDYSIZE / 2 + 10 + _relativepos.y * 90};
 }
 
-void Candy::grab(Point mouseLoc)
+void Candy::grab()
 {
-    _absolutepos = mouseLoc;
-    if (!grabbed())
+
+    if (!animation->moving())
     {
         animation.release();
         animation = std::make_unique<Grabbed>(_absolutepos, color);
@@ -54,7 +54,7 @@ void Candy::grab(Point mouseLoc)
 }
 void Candy::ungrab()
 {
-    _absolutepos = relativeToAbsolute();
+    std::cout << "ungrabbed candy at pos: " << _relativepos.x << " " << _relativepos.y << std::endl;
     animation.release();
     animation = std::make_unique<NoAnimation>(_absolutepos, color);
 }
@@ -95,7 +95,7 @@ void Candy::refreshAnimation()
     }
     else
     {
-        animation->refresh(_absolutepos,color);
+        animation->refresh(_absolutepos);
     }
 }
 
@@ -107,6 +107,20 @@ void Candy::suppress()
         animation = std::make_unique<Suppression>(_absolutepos,color);
     }
     
+}
+
+bool Candy::animationOver()
+{
+    if (animation)
+    {
+        return animation->isOver();
+    }
+    return true;
+}
+
+void Candy::highlight()
+{
+    grab();
 }
 //////////////////////////////////////////////////// all draw methods overriden
 void Napoleone::draw()

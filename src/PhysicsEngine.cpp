@@ -3,12 +3,17 @@
 #include "constantes.hpp"
 #include "iostream"
 
-PhysicsEngine::PhysicsEngine() : g{} {}
+PhysicsEngine::PhysicsEngine() : g{}
+{
+}
 
 PhysicsEngine::~PhysicsEngine() { g.~Grid(); }
 
 void PhysicsEngine::refresh()
 {
+
+    //g.displayStartingScreen();
+
     g.render(grabbed);
     g.refresh();
 }
@@ -22,7 +27,7 @@ void PhysicsEngine::keyPressed(int /*keyCode*/) { exit(0); }
 
 void PhysicsEngine::drag(Point mouseLoc)
 {
-    grabbed = g.grab(mouseLoc,grabbed);
+    grabbed = g.grab(mouseLoc, grabbed);
 }
 
 void PhysicsEngine::undrag(Point mouseLoc)

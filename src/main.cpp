@@ -3,6 +3,13 @@
 #include "Candies.hpp"
 #include "iostream"
 
+/*
+done tasks:
+1
+2
+11
+
+*/
 
 int main(int argc, char *argv[]) {
 	srand(time(0));

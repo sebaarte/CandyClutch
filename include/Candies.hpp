@@ -14,7 +14,6 @@ protected:
     Point relativeToAbsolute();
     int _type;
     bool _grabbed = false;
-    bool animated = false;
     std::unique_ptr<Animation> animation;
     Fl_Color color;
 
@@ -27,15 +26,16 @@ public:
     bool contains(Point mouseLoc);
     const Point absolutePos() const;
     const Point relativePos() const;
-    void grab(Point mouseLoc);
+    void grab();
     void ungrab();
     void setPos(Point newPos);
     const int type() const;
     const bool grabbed() const { return _grabbed; }
     void translate();
     void refreshAnimation();
-    bool animationOver(){return animation->isOver();}
+    bool animationOver();
     void suppress();
+    void highlight();
 };
 
 class Napoleone : public Candy

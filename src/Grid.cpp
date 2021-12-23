@@ -5,6 +5,7 @@
 #include "Candies.hpp"
 #include "iostream"
 #include "memory"
+#include <FL/Fl_Text_Display.H>
 
 Grid::Grid()
 {
@@ -33,16 +34,25 @@ Grid::~Grid()
     }
 }
 
-void Grid::render(Candy *grabbed) const
+void Grid::displayStartingScreen()
+{
+    fl_font(5, 50);
+    fl_draw("Candy Clutch", WINDOWSIZE / 2, WINDOWSIZE / 2, WINDOWSIZE / 2, WINDOWSIZE / 2, FL_ALIGN_CENTER, nullptr, 1);
+    fl_draw("Sébastien Arte", 0, 4 * WINDOWSIZE / 5);
+}
+
+void Grid::render(Candy *grabbed)
 {
     // draws the first layer (grid)
     for (int i = 0; i < GRIDSIZE; i++)
     {
         for (int j = 0; j < GRIDSIZE; j++)
         {
-            fl_draw_box(FL_FLAT_BOX, OFFSET + j * 90, OFFSET + i * 90, squareSize, squareSize, FL_WHITE);
+            fl_draw_box(FL_FLAT_BOX, OFFSET + j * 90, OFFSET + i * 90, SQUARESIZE, SQUARESIZE, FL_WHITE);
         }
     }
+    // highlighting if the player takes too much time
+    giveClue();
 
     // displays second layer (ungrabbed candies)
     for (auto i : gameGrid)
@@ -55,13 +65,40 @@ void Grid::render(Candy *grabbed) const
             }
         }
     }
-    // draws third layer (animations)
-    // TODO
 
     // draws last layer (grabbed candy)
     if (grabbed)
     {
         grabbed->draw();
+    }
+}
+
+void Grid::giveClue()
+{
+    if (helpTimer == HELPTIME && !highlighted)
+    {
+        for (int i = 0; i < GRIDSIZE; i++)
+        {
+            for (int j = 0; j < GRIDSIZE; j++)
+            {
+                if (isValidMove({j + 1, i}, {j, i}) || isValidMove({j, i + 1}, {j, i}))
+                {
+                    int r = rand() % 5 + 1;
+                    if (r == 1)
+                    {
+                        gameGrid.at(i).at(j)->highlight();
+                        highlighted = new Point{j, i};
+                        helpTimer = 0;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        helpTimer = helpTimer % HELPTIME;
+        helpTimer++;
     }
 }
 
@@ -75,7 +112,7 @@ Candy *Grid::grab(Point mouseLoc, Candy *grabbed)
             {
                 if (j->contains(mouseLoc) && j->type() != -1)
                 {
-                    j->grab(mouseLoc);
+                    j->grab();
                     return j;
                 }
             }
@@ -84,13 +121,19 @@ Candy *Grid::grab(Point mouseLoc, Candy *grabbed)
     }
     else
     {
-        grabbed->grab(mouseLoc);
+        grabbed->grab();
         return grabbed;
     }
 }
 
 void Grid::ungrab(Point mouseLoc, Candy *grabbed)
 {
+    if (highlighted)
+    {
+        gameGrid.at(highlighted->y).at(highlighted->x)->ungrab();
+        highlighted = nullptr;
+    }
+    helpTimer = 0;
     for (auto i : gameGrid)
     {
         for (auto j : i)
@@ -113,7 +156,6 @@ void Grid::swap(Point pos1, Point pos2)
     gameGrid.at(pos2.y).at(pos2.x)->setPos(pos1);
     gameGrid.at(pos2.y).at(pos2.x)->refreshAnimation();
     std::iter_swap(gameGrid[pos1.y].begin() + pos1.x, gameGrid[pos2.y].begin() + pos2.x);
-    
 }
 
 bool Grid::isAdjacent(Point pos1, Point pos2) const
@@ -141,6 +183,11 @@ bool Grid::isValidMove(Point dest, Point source) const
     int destType = caseType(source, SELF);
     int sourceType = caseType(dest, SELF);
     bool sameType = (sourceType == destType);
+    if (dest.y >= GRIDSIZE || dest.y <= -1 || dest.x >= GRIDSIZE || dest.x <= -1)
+    {
+        return false;
+    }
+    
 
     if (dest.x != source.x) // moving horizontally
     {
@@ -218,7 +265,8 @@ bool Grid::isValidMove(Point dest, Point source) const
     }
     return false;
 }
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
 int Grid::caseType(Point pos, int direction) const
 {
     try
@@ -390,10 +438,8 @@ void Grid::remove(Point p)
     else
     {
         gameGrid.at(p.y).at(p.x)->suppress();
+        score += 10;
     }
-    
-    
-    
 }
 
 void Grid::fillEmpty()
@@ -412,9 +458,10 @@ void Grid::fillEmpty()
                     {
                         for (int k = i; k > -1; k--) // fill the empty column with random candies
                         {
+
                             gameGrid.at(k).at(j) = randomCandy(j, k);
-                            //gameGrid.at(k).at(j)->translate();
-                            gameGrid.at(k).at(j)->refreshAnimation();
+                            gameGrid.at(k).at(j)->translate();
+                            //gameGrid.at(k).at(j)->refreshAnimation();
                         }
                         return;
                     }
@@ -448,6 +495,7 @@ Candy *Grid::randomCandy(int x, int y)
         return new Chique(x, y);
     }
 }
+#pragma GCC diagnostic pop
 
 void Grid::print()
 {

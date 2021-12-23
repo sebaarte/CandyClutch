@@ -16,8 +16,8 @@ public:
     ~Animation() = default;
     virtual void animate() = 0;
     bool isOver() {return counter == duration;}
-    void refresh(Point pos, Fl_Color color);
-    virtual bool moving();
+    void refresh(Point pos);
+    virtual bool moving() = 0;
 };
 
 class NoAnimation : public Animation
@@ -55,4 +55,14 @@ public:
     ~Suppression() = default;
     void animate() override;
     bool moving() override {return true;}
+};
+
+class Slide: public Animation
+{
+    Point dest;
+public:
+    Slide(Point absolutePos,Fl_Color color,Point relativePos);
+    ~Slide() = default;
+    void animate() override;
+    bool moving () override {return true;}
 };

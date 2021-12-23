@@ -2,7 +2,7 @@
 #include "constantes.hpp"
 #include "Fl/Fl.H"
 
-MainWindow::MainWindow() : Fl_Window(windowX, windowY, windowSize, windowSize, "CandyClutch"), physicsEngine{}
+MainWindow::MainWindow() : Fl_Window(WINDOWX, WINDOWY, WINDOWSIZE, WINDOWSIZE, "CandyClutch"), physicsEngine{}
 {
 	Fl::add_timeout(refreshRate, Timer_CB, this);
 	resizable(NULL);
