@@ -22,7 +22,7 @@ public:
     Candy(int x, int y);
     Candy(Point pos, std::unique_ptr<Animation> anim);
     Candy(int x, int y, std::unique_ptr<Animation> anim);
-    virtual void draw() = 0;
+    void draw();
     bool contains(Point mouseLoc);
     const Point absolutePos() const;
     const Point relativePos() const;
@@ -36,6 +36,9 @@ public:
     bool animationOver();
     void suppress();
     void highlight();
+    void slide(Point dest,Fl_Color);
+    bool animated(){return animation->moving();}
+    const Fl_Color colour() const {return color;}
 };
 
 class Napoleone : public Candy
@@ -52,52 +55,92 @@ public:
         _type = 1;
     }
     ~Napoleone() = default;
-    void draw() override;
+    void draw();
 };
 
 class Fruitello : public Candy
 {
 public:
-    Fruitello(Point pos) : Candy(pos) { _type = 2; color = FL_PINK;}
-    Fruitello(int x, int y) : Candy(x, y) { _type = 2; color = FL_PINK;}
+    Fruitello(Point pos) : Candy(pos)
+    {
+        _type = 2;
+        color = FL_PINK;
+    }
+    Fruitello(int x, int y) : Candy(x, y)
+    {
+        _type = 2;
+        color = FL_PINK;
+    }
     ~Fruitello() = default;
-    void draw() override;
+    void draw();
 };
 
 class Magnom : public Candy
 {
 public:
-    Magnom(Point pos) : Candy(pos) { _type = 3; color = FL_BLACK;}
-    Magnom(int x, int y) : Candy(x, y) { _type = 3; color = FL_BLACK;}
+    Magnom(Point pos) : Candy(pos)
+    {
+        _type = 3;
+        color = FL_BLACK;
+    }
+    Magnom(int x, int y) : Candy(x, y)
+    {
+        _type = 3;
+        color = FL_BLACK;
+    }
     ~Magnom() = default;
-    void draw() override;
+    void draw();
 };
 
 class Chocoteuf : public Candy
 {
 public:
-    Chocoteuf(Point pos) : Candy(pos) { _type = 4; color = FL_BROWN;}
-    Chocoteuf(int x, int y) : Candy(x, y) { _type = 4; color = FL_BROWN;}
+    Chocoteuf(Point pos) : Candy(pos)
+    {
+        _type = 4;
+        color = FL_BROWN;
+    }
+    Chocoteuf(int x, int y) : Candy(x, y)
+    {
+        _type = 4;
+        color = FL_BROWN;
+    }
     ~Chocoteuf() = default;
-    void draw() override;
+    void draw();
 };
 
 class Haribot : public Candy
 {
 public:
-    Haribot(Point pos) : Candy(pos) { _type = 5; color = FL_PURPLE;}
-    Haribot(int x, int y) : Candy(x, y) { _type = 5;color = FL_PURPLE; }
+    Haribot(Point pos) : Candy(pos)
+    {
+        _type = 5;
+        color = FL_PURPLE;
+    }
+    Haribot(int x, int y) : Candy(x, y)
+    {
+        _type = 5;
+        color = FL_PURPLE;
+    }
     ~Haribot() = default;
-    void draw() override;
+    void draw();
 };
 
 class Chique : public Candy
 {
 public:
-    Chique(Point pos) : Candy(pos) { _type = 6; color = FL_BLUE;}
-    Chique(int x, int y) : Candy(x, y) { _type = 6; color = FL_BLUE;}
+    Chique(Point pos) : Candy(pos)
+    {
+        _type = 6;
+        color = FL_BLUE;
+    }
+    Chique(int x, int y) : Candy(x, y)
+    {
+        _type = 6;
+        color = FL_BLUE;
+    }
     ~Chique() = default;
-    void draw() override;
+    void draw();
 };
 
 class Empty : public Candy
@@ -106,5 +149,5 @@ public:
     Empty(Point pos) : Candy(pos) { _type = -1; }
     Empty(int x, int y) : Candy(x, y) { _type = -1; }
     ~Empty() = default;
-    void draw() override;
+    void draw();
 };

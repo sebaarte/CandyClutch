@@ -1,3 +1,5 @@
+#pragma once
+
 // fltk args constants
 constexpr int WINDOWSIZE = 900;
 constexpr int WINDOWX = 900;

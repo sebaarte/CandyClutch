@@ -54,7 +54,6 @@ void Candy::grab()
 }
 void Candy::ungrab()
 {
-    std::cout << "ungrabbed candy at pos: " << _relativepos.x << " " << _relativepos.y << std::endl;
     animation.release();
     animation = std::make_unique<NoAnimation>(_absolutepos, color);
 }
@@ -122,8 +121,14 @@ void Candy::highlight()
 {
     grab();
 }
+
+void Candy::slide(Point dest,Fl_Color otherColor)
+{
+    animation.release();
+    animation = std::make_unique<Slide>(_absolutepos,otherColor,dest);
+}
 //////////////////////////////////////////////////// all draw methods overriden
-void Napoleone::draw()
+void Candy::draw()
 {
     if (!animation)
     {
@@ -137,75 +142,6 @@ void Napoleone::draw()
     animation->animate();
 }
 
-void Fruitello::draw()
-{
-    if (!animation)
-    {
-        animation = std::make_unique<NoAnimation>(_absolutepos, color);
-    }
-    else if (animation->isOver())
-    {
-        animation = std::make_unique<NoAnimation>(_absolutepos, color);
-    }
-    
-    animation->animate();
-}
-
-void Magnom::draw()
-{
-    if (!animation)
-    {
-        animation = std::make_unique<NoAnimation>(_absolutepos, color);
-    }
-    else if (animation->isOver())
-    {
-        animation = std::make_unique<NoAnimation>(_absolutepos, color);
-    }
-    
-    animation->animate();
-}
-
-void Chocoteuf::draw()
-{
-    if (!animation)
-    {
-        animation = std::make_unique<NoAnimation>(_absolutepos, color);
-    }
-    else if (animation->isOver())
-    {
-        animation = std::make_unique<NoAnimation>(_absolutepos, color);
-    }
-    
-    animation->animate();
-}
-
-void Haribot::draw()
-{
-    if (!animation)
-    {
-        animation = std::make_unique<NoAnimation>(_absolutepos, color);
-    }
-    else if (animation->isOver())
-    {
-        animation = std::make_unique<NoAnimation>(_absolutepos, color);
-    }
-    
-    animation->animate();
-}
-
-void Chique::draw()
-{
-    if (!animation)
-    {
-        animation = std::make_unique<NoAnimation>(_absolutepos, color);
-    }
-    else if (animation->isOver())
-    {
-        animation = std::make_unique<NoAnimation>(_absolutepos, color);
-    }
-    
-    animation->animate();
-}
 
 void Empty::draw()
 {

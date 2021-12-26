@@ -18,6 +18,7 @@ public:
     bool isOver() {return counter == duration;}
     void refresh(Point pos);
     virtual bool moving() = 0;
+    bool sliding(){return false;}
 };
 
 class NoAnimation : public Animation
@@ -60,9 +61,12 @@ public:
 class Slide: public Animation
 {
     Point dest;
+    Fl_Color _color2;
+    int direction;
 public:
     Slide(Point absolutePos,Fl_Color color,Point relativePos);
     ~Slide() = default;
     void animate() override;
     bool moving () override {return true;}
+    bool sliding() {return true;}
 };

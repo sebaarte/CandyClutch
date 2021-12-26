@@ -27,20 +27,37 @@ Suppression::Suppression(Point pos, Fl_Color color) : Animation(pos, color)
     duration = 30;
 
 }
-Slide::Slide(Point startpos,Fl_Color color,Point relativeDest) : Animation(startpos,color)
+Slide::Slide(Point startpos,Fl_Color color,Point relativeDest) : Animation(startpos, color)
 {
+    duration = 30;
     dest = relativeDest.toAbsolute();
-    
-
+    if (startpos.x < dest.x) // moving left
+    {
+        direction = LEFT;
+    }
+    else if (startpos.x > dest.x) // moving right
+    {
+        direction = RIGHT;
+    }
+    else if (startpos.y < dest.y) // moving up
+    {
+        direction = UP;
+    }
+    else if (startpos.y > dest.y) // moving down
+    {
+        direction = DOWN;
+    }
 }
 
 //////////////////////////// miscelanous Animation methods
 
 void Animation::refresh(Point pos)
 {
-    _pos = pos;
+    if (!sliding())
+    {
+        _pos = pos;
+    }
 }
-
 /////////////////////////////////// different animations
 void NoAnimation::animate()
 {
@@ -81,6 +98,22 @@ void Suppression::animate()
 
 void Slide::animate()
 {
-
-
+    switch (direction)
+    {
+    case UP:
+        fl_draw_box(FL_FLAT_BOX,_pos.x - CANDYSIZE/2, _pos.y - CANDYSIZE/2 - counter*2,CANDYSIZE, CANDYSIZE, _color);
+        break;
+    case LEFT:
+        fl_draw_box(FL_FLAT_BOX,_pos.x - CANDYSIZE/2- counter*2, _pos.y - CANDYSIZE/2 ,CANDYSIZE, CANDYSIZE, _color);
+        break;
+    case RIGHT:
+        fl_draw_box(FL_FLAT_BOX,_pos.x - CANDYSIZE/2+counter*2, _pos.y - CANDYSIZE/2,CANDYSIZE, CANDYSIZE, _color);
+        break;
+    case DOWN:
+        fl_draw_box(FL_FLAT_BOX,_pos.x - CANDYSIZE/2, _pos.y - CANDYSIZE/2 + counter*2,CANDYSIZE, CANDYSIZE, _color);
+        break;
+    default:
+        break;
+    }
+    counter++;
 }

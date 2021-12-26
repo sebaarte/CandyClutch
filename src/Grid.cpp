@@ -43,7 +43,7 @@ void Grid::displayStartingScreen()
 
 void Grid::render(Candy *grabbed)
 {
-    // draws the first layer (grid)
+    // draws the empty squares behind the candies
     for (int i = 0; i < GRIDSIZE; i++)
     {
         for (int j = 0; j < GRIDSIZE; j++)
@@ -54,22 +54,12 @@ void Grid::render(Candy *grabbed)
     // highlighting if the player takes too much time
     giveClue();
 
-    // displays second layer (ungrabbed candies)
     for (auto i : gameGrid)
     {
         for (auto j : i)
         {
-            if (!j->grabbed())
-            {
                 j->draw();
-            }
         }
-    }
-
-    // draws last layer (grabbed candy)
-    if (grabbed)
-    {
-        grabbed->draw();
     }
 }
 
@@ -140,7 +130,9 @@ void Grid::ungrab(Point mouseLoc, Candy *grabbed)
         {
             if (j->type() != -1 && j->contains(mouseLoc) && isAdjacent(j->relativePos(), grabbed->relativePos()) && isValidMove(j->relativePos(), grabbed->relativePos()))
             {
-                grabbed->ungrab();
+                
+                grabbed->slide(j->relativePos(),j->colour());
+                j->slide(grabbed->relativePos(),grabbed->colour());
                 swap(j->relativePos(), grabbed->relativePos());
                 return;
             }
@@ -152,8 +144,9 @@ void Grid::ungrab(Point mouseLoc, Candy *grabbed)
 void Grid::swap(Point pos1, Point pos2)
 {
     gameGrid.at(pos1.y).at(pos1.x)->setPos(pos2);
-    gameGrid.at(pos1.y).at(pos1.x)->refreshAnimation();
+    
     gameGrid.at(pos2.y).at(pos2.x)->setPos(pos1);
+    gameGrid.at(pos1.y).at(pos1.x)->refreshAnimation();
     gameGrid.at(pos2.y).at(pos2.x)->refreshAnimation();
     std::iter_swap(gameGrid[pos1.y].begin() + pos1.x, gameGrid[pos2.y].begin() + pos2.x);
 }
@@ -187,7 +180,6 @@ bool Grid::isValidMove(Point dest, Point source) const
     {
         return false;
     }
-    
 
     if (dest.x != source.x) // moving horizontally
     {
@@ -385,6 +377,7 @@ void Grid::refresh()
                     {
                         if (i == 2)
                         {
+
                             toClear.push_back(tempPos);
                             toClear.push_back(tempPos.xAdd(1));
                             toClear.push_back(tempPos.xAdd(2));
@@ -402,6 +395,7 @@ void Grid::refresh()
                         }
                         else
                         {
+
                             toClear.push_back(tempPos);
                             toClear.push_back(tempPos.yAdd(1));
                             toClear.push_back(tempPos.yAdd(2));
@@ -431,14 +425,14 @@ void Grid::refresh()
 
 void Grid::remove(Point p)
 {
-    if (gameGrid.at(p.y).at(p.x)->animationOver())
+    if (gameGrid.at(p.y).at(p.x)->animationOver() )
     {
         gameGrid.at(p.y).at(p.x) = new Empty(p);
+        score += 10;
     }
     else
     {
         gameGrid.at(p.y).at(p.x)->suppress();
-        score += 10;
     }
 }
 
@@ -461,7 +455,6 @@ void Grid::fillEmpty()
 
                             gameGrid.at(k).at(j) = randomCandy(j, k);
                             gameGrid.at(k).at(j)->translate();
-                            //gameGrid.at(k).at(j)->refreshAnimation();
                         }
                         return;
                     }
