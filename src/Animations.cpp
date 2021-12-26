@@ -53,10 +53,7 @@ Slide::Slide(Point startpos,Fl_Color color,Point relativeDest) : Animation(start
 
 void Animation::refresh(Point pos)
 {
-    if (!sliding())
-    {
         _pos = pos;
-    }
 }
 /////////////////////////////////// different animations
 void NoAnimation::animate()
