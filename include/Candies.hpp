@@ -39,6 +39,7 @@ public:
     void slide(Point dest,Fl_Color);
     bool animated(){return animation->moving();}
     const Fl_Color colour() const {return color;}
+    bool sliding() {return animation->sliding();}
 };
 
 class Napoleone : public Candy

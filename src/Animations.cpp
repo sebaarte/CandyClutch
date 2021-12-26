@@ -29,7 +29,7 @@ Suppression::Suppression(Point pos, Fl_Color color) : Animation(pos, color)
 }
 Slide::Slide(Point startpos,Fl_Color color,Point relativeDest) : Animation(startpos, color)
 {
-    duration = 30;
+    duration = 31;
     dest = relativeDest.toAbsolute();
     if (startpos.x < dest.x) // moving left
     {

@@ -418,6 +418,7 @@ void Grid::refresh()
     }
     for (Point p : toClear)
     {
+        std::cout << p.x << " " << p.y << std::endl;
         remove(p);
     }
     fillEmpty();
